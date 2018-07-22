@@ -4,6 +4,9 @@ import java.nio.file.Path
 
 interface Player {
 
+    val isPlaying: Boolean
+    val isOpened: Boolean
+
     fun open(track: Path)
     fun close()
     fun play()

@@ -6,16 +6,16 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.sound.sampled.*
 
-private val AUDIO_CHUNK_SIZE = 512
+private const val AUDIO_CHUNK_SIZE = 128
 
 class LocalTrackPlayer: Player {
 
     private var _isOpened = false
     private var _isPlaying = false
 
-    val isOpened
+    override val isOpened
         get() = _isOpened
-    val isPlaying
+    override val isPlaying
         get() = _isPlaying
 
     private lateinit var filePath: Path
