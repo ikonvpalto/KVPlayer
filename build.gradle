@@ -1,5 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.2.51'
+    ext.java_version_short = '8'
+    ext.java_version = "1.$java_version_short"
+    ext.mp3spi_version = '1.9.5.4'
+    ext.tritonus_share_version = '0.3.7.4'
+
 
     repositories {
         mavenCentral()
@@ -19,12 +24,14 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "com.googlecode.soundlibs:mp3spi:$mp3spi_version"
+    implementation "com.googlecode.soundlibs:tritonus-share:$tritonus_share_version"
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = java_version
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = java_version
 }
