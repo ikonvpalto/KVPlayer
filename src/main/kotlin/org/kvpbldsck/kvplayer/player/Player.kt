@@ -10,6 +10,8 @@ interface Player {
     fun open(track: Path)
     fun close()
     fun play()
+    fun pause()
+    fun playPause()
     fun stop()
 
 }

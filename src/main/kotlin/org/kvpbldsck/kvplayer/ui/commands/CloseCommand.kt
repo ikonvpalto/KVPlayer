@@ -16,7 +16,7 @@ class CloseCommand: Command {
         return try
         {
             player.close()
-            "Success"
+            "Closed"
         } catch (e: AudioPlayerException)
         {
             e.printStackTrace()

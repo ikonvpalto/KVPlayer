@@ -9,14 +9,20 @@ class UserController {
         var command = readCommand()
 
         while (!command.isExitCommand()) {
-            val result = executeCommand(command.first, command.second)
-            println(result)
+            try {
+                val result = executeCommand(command.first, command.second)
+                println(result)
+            } catch (e : Exception) {
+                println(e.localizedMessage)
+                e.printStackTrace()
+            }
 
             command = readCommand()
         }
     }
 
     private fun readCommand(): Pair<String, String> {
+        System.out.flush()
         val line = readLine()
 
         if (null == line)
