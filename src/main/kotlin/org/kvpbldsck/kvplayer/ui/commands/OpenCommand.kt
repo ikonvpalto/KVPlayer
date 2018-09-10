@@ -6,6 +6,10 @@ import org.kvpbldsck.kvplayer.player.Player
 import java.nio.file.Paths
 
 class OpenCommand: Command {
+    override val name: String
+        get() = "open"
+    override val description: String
+        get() = "Open new track"
 
     private val player: Player = objectContainer.player
 

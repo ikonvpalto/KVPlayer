@@ -2,7 +2,6 @@ package org.kvpbldsck.kvplayer.player.impl
 
 import kotlinx.coroutines.experimental.*
 import org.kvpbldsck.kvplayer.player.Player
-import org.kvpbldsck.kvplayer.exception.AudioPlayerException
 import org.kvpbldsck.kvplayer.player.loader.AudioTrack
 import java.nio.file.Path
 import javax.sound.sampled.*
@@ -15,20 +14,20 @@ class LocalTrackPlayer: Player {
     private var _isOpened = false
     private var _isPlaying = false
 
-    override val isOpened
-        get() = _isOpened
-    override val isPlaying
-        get() = _isPlaying
-
     private lateinit var audioTrack: AudioTrack
     private lateinit var audioOut: SourceDataLine
 
     private lateinit var playJob: Job
     private lateinit var playContinuation: Continuation<String>
 
+    override val isOpened
+        get() = _isOpened
+    override val isPlaying
+        get() = _isPlaying
+    override val volume = VolumeImpl()
+
     override fun open(track: Path) {
-        if (_isOpened)
-            throw AudioPlayerException("You should close already opened track before opening new one")
+        assert(!_isOpened) { "You should close already opened track before opening new one" }
 
         audioTrack = AudioTrack.fromFilePath(track)
 
@@ -39,8 +38,7 @@ class LocalTrackPlayer: Player {
     }
 
     override fun close() {
-        if (!_isOpened)
-            throw AudioPlayerException("You try to close track, but there is no opened one")
+        assert(_isOpened) { "You try to close track, but there is no opened one" }
 
         stop()
         playJob.cancel()
@@ -49,8 +47,8 @@ class LocalTrackPlayer: Player {
     }
 
     override fun play() {
-        if (!_isOpened)
-            throw AudioPlayerException("Nothing opened now")
+        assert(_isOpened) { "Nothing opened now" }
+        assert(!_isPlaying) { "Already play" }
 
         _isPlaying = true
         audioOut.start()
@@ -58,18 +56,15 @@ class LocalTrackPlayer: Player {
     }
 
     override fun pause() {
-        if (!_isPlaying)
-            throw AudioPlayerException("Nothing playing now")
+        assert(_isOpened) { "Nothing opened now" }
+        assert(!_isPlaying) { "Nothing playing now" }
 
         _isPlaying = false
         audioOut.stop()
     }
 
     override fun playPause() {
-        if (!_isOpened)
-            throw AudioPlayerException("There is no track opened")
-
-        println(_isPlaying)
+        assert(_isOpened) { "There is no track opened" }
 
         when (_isPlaying) {
             true -> pause()
@@ -78,14 +73,15 @@ class LocalTrackPlayer: Player {
     }
 
     override fun stop() {
-        _isPlaying = false
-        audioOut.drain()
-        audioOut.stop()
+        assert(_isOpened) { "Nothing opened now" }
+
+        pause()
     }
 
     private fun openSpeakersOut() {
         audioOut = AudioSystem.getSourceDataLine(audioTrack.decodedAudioFormat)
         audioOut.open()
+        volume.masterGain = audioOut.getMasterGainControl()
     }
 
     private fun prepareForFirstPlay() {
@@ -96,9 +92,7 @@ class LocalTrackPlayer: Player {
             while (_isOpened) {
 
                 if (!_isPlaying) {
-                    println("Before pausing")
                     pausePlayCoroutine()
-                    println("After pausing")
                     continue
                 }
 
@@ -120,11 +114,13 @@ class LocalTrackPlayer: Player {
     }
 
     private fun prepareForPlaying() {
-        if (!_isOpened)
-            throw AudioPlayerException("Cannot play if no track opened")
+        assert(_isOpened) { "Cannot play if no track opened" }
 
         _isPlaying = true
         audioOut.start()
     }
+
+    private fun SourceDataLine.getVolumeControl() = getControl(FloatControl.Type.VOLUME) as FloatControl
+    private fun SourceDataLine.getMasterGainControl() = getControl(FloatControl.Type.MASTER_GAIN) as FloatControl
 
 }

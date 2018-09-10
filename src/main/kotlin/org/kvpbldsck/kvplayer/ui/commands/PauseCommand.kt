@@ -5,6 +5,10 @@ import org.kvpbldsck.kvplayer.exception.AudioPlayerException
 import org.kvpbldsck.kvplayer.player.Player
 
 class PauseCommand: Command {
+    override val name: String
+        get() = "pause"
+    override val description: String
+        get() = "Pause current track"
 
     private val player = objectContainer.player
 

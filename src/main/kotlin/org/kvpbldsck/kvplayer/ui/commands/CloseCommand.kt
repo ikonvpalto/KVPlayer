@@ -5,6 +5,10 @@ import org.kvpbldsck.kvplayer.exception.AudioPlayerException
 import org.kvpbldsck.kvplayer.player.Player
 
 class CloseCommand: Command {
+    override val name: String
+        get() = "close"
+    override val description: String
+        get() = "Close currently opened track"
 
     val player: Player = objectContainer.player
 

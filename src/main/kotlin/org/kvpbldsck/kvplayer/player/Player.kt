@@ -6,6 +6,7 @@ interface Player {
 
     val isPlaying: Boolean
     val isOpened: Boolean
+    val volume: Volume
 
     fun open(track: Path)
     fun close()
